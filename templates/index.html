@@ -1,0 +1,118 @@
+<!-- templates/index.html -->
+{% extends "base.html" %}
+{% block content %}
+<section class="controls-section">
+  <form class="search-form" method="get" action="/">
+    <div class="form-row">
+      <label>Latitude</label>
+      <input type="text" name="lat" placeholder="e.g. 42.729" value="{{ lat }}">
+    </div>
+    <div class="form-row">
+      <label>Longitude</label>
+      <input type="text" name="lng" placeholder="-73.678" value="{{ lng }}">
+    </div>
+    <div class="form-row">
+      <label>Radius (km)</label>
+      <input type="number" step="1" name="radius" value="{{ radius }}">
+    </div>
+    <div class="form-row">
+      <label>Start date</label>
+      <input type="date" name="start_date" value="{{ start_date }}">
+    </div>
+    <div class="form-row">
+      <label>End date</label>
+      <input type="date" name="end_date" value="{{ end_date }}">
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="btn-primary">Pin Events</button>
+      <button
+        type="button"
+        class="btn-secondary"
+        onclick="useGeolocation()"
+      >
+        Use My Location
+      </button>
+    </div>
+    <p class="hint-text">
+      Tip: Use a lat/lng for your campus or city center. Click “Use My Location”
+      if your browser allows it.
+    </p>
+  </form>
+</section>
+
+<section class="board-section">
+  <div class="board-frame">
+    <div class="board-title-strip">
+      <span>COMMUNITY EVENTS</span>
+      <span class="board-sub">retro flyers • modern data</span>
+    </div>
+
+    {% if events %}
+      <div class="board-grid">
+        {% for e in events %}
+          <article class="event-card">
+            <div class="pin pin-top-left"></div>
+            <div class="pin pin-top-right"></div>
+
+            <header class="event-header">
+              <h2 class="event-title">{{ e.title }}</h2>
+              <span class="event-source">{{ e.source }}</span>
+            </header>
+
+            <div class="event-body">
+              <p class="event-when">
+                {{ e.start_time.strftime('%a %b %d, %Y %I:%M %p') }}
+              </p>
+              {% if e.venue_name %}
+                <p class="event-where">{{ e.venue_name }}</p>
+              {% endif %}
+              {% if e.address %}
+                <p class="event-address">{{ e.address }}</p>
+              {% endif %}
+              {% if e.description %}
+                <p class="event-description">
+                  {{ e.description[:160] }}{% if e.description|length > 160 %}…{% endif %}
+                </p>
+              {% endif %}
+            </div>
+
+            <footer class="event-footer">
+              {% if e.url %}
+                <a href="{{ e.url }}" target="_blank" class="btn-link">
+                  View original event
+                </a>
+              {% endif %}
+            </footer>
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="board-empty">
+        <p>No events pinned yet.</p>
+        <p>Enter a location and radius, then hit <strong>Pin Events</strong>.</p>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<script>
+  function useGeolocation() {
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser.");
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      function (pos) {
+        const latInput = document.querySelector('input[name="lat"]');
+        const lngInput = document.querySelector('input[name="lng"]');
+        latInput.value = pos.coords.latitude.toFixed(5);
+        lngInput.value = pos.coords.longitude.toFixed(5);
+      },
+      function (err) {
+        console.error(err);
+        alert("Unable to get your location.");
+      }
+    );
+  }
+</script>
+{% endblock %}

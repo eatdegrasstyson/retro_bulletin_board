@@ -1,0 +1,26 @@
+<!-- templates/base.html -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Retro Event Bulletin Board</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <div class="header-inner">
+        <h1 class="app-title">RETRO EVENT BOARD</h1>
+        <p class="app-subtitle">Old-school corkboard. Modern web scraping.</p>
+      </div>
+    </header>
+    <main>
+      {% block content %}{% endblock %}
+    </main>
+    <footer class="app-footer">
+      <span>Built for Retro vs Modern • Python + Flask</span>
+    </footer>
+  </div>
+</body>
+</html>
